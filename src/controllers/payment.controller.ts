@@ -28,16 +28,6 @@ export const createPaymentIntent = TryCatch(async (req, res, next) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
 export const newCoupon = TryCatch(async (req, res, next) => {
   const { coupon, amount } = req.body;
 
@@ -45,7 +35,7 @@ export const newCoupon = TryCatch(async (req, res, next) => {
     return next(new Errorhandler("Please enter both coupon and amount ", 400));
 
   await Coupon.create({ code: coupon, amount });
-
+console.log(Coupon)
   return res.status(201).json({
     success: true,
     message: `coupon ${coupon} created succesfully`,
@@ -71,6 +61,7 @@ export const allCoupons = TryCatch(async (req, res, next) => {
   return res.status(201).json({
     success: true,
     coupons,
+
   });
 });
 
@@ -82,8 +73,9 @@ export const deleteCoupon = TryCatch(async (req, res, next) => {
 
 if(!coupon ) return next(new Errorhandler("invalid Coupon Id" , 400))
 
+
   return res.status(201).json({
     success: true,
-    msg: `coupon ${coupon.code} deleted succesffully`,
+    msg: `coupon  deleted succesffully`,
   });
 });
