@@ -1,19 +1,18 @@
-import mongoose from "mongoose";
-import { OrderItemType, invalidateCacheTypeProps } from "../types/types.js";
+import mongoose, { Document } from "mongoose";
 import { myCache } from "../app.js";
 import { Product } from "../models/product.model.js";
-import { Order } from "../models/orders.model.js";
+import { invalidateCacheTypeProps, OrderItemType } from "../types/types.js";
 
 export const connectDB = (uri: string) => {
   mongoose
     .connect(uri, {
-      dbName: "Ecommerce24",
+      dbName: "Ecommerce_24",
     })
-    .then((c) => console.log(`DB connected on host ${c.connection.host} `))
-    .catch((error) => console.error("Error connecting to DB:", error));
+    .then((c) => console.log(`DB Connected to ${c.connection.host}`))
+    .catch((e) => console.log(e));
 };
 
-export const invalidateCache = async ({
+export const invalidateCache = ({
   product,
   order,
   admin,
@@ -21,35 +20,36 @@ export const invalidateCache = async ({
   orderId,
   productId,
 }: invalidateCacheTypeProps) => {
-  if (product && Array.isArray(productId)) {
+  if (product) {
     const productKeys: string[] = [
       "latest-products",
       "categories",
       "all-products",
     ];
 
-    productId.forEach((id) => {
-      productKeys.push(`product-${id}`);
-    });
+    if (typeof productId === "string") productKeys.push(`product-${productId}`);
+
+    if (typeof productId === "object")
+      productId.forEach((i) => productKeys.push(`product-${i}`));
 
     myCache.del(productKeys);
   }
   if (order) {
-    const orderKeys: string[] = [
+    const ordersKeys: string[] = [
       "all-orders",
       `my-orders-${userId}`,
       `order-${orderId}`,
     ];
 
-    myCache.del(orderKeys);
+    myCache.del(ordersKeys);
   }
   if (admin) {
     myCache.del([
       "admin-stats",
       "admin-pie-charts",
       "admin-bar-charts",
-      "admin-line-charts"
-    ])
+      "admin-line-charts",
+    ]);
   }
 };
 
@@ -57,20 +57,15 @@ export const reduceStock = async (orderItems: OrderItemType[]) => {
   for (let i = 0; i < orderItems.length; i++) {
     const order = orderItems[i];
     const product = await Product.findById(order.productid);
-
-    if (!product) throw new Error("Product not found");
-
+    if (!product) throw new Error("Product Not Found");
     product.stock -= order.quantity;
-
     await product.save();
   }
 };
 
 export const calculatePercentage = (thisMonth: number, lastMonth: number) => {
   if (lastMonth === 0) return thisMonth * 100;
-
   const percent = (thisMonth / lastMonth) * 100;
-
   return Number(percent.toFixed(0));
 };
 
@@ -85,8 +80,6 @@ export const getInventories = async ({
     Product.countDocuments({ category })
   );
 
-  console.log("inventory");
-
   const categoriesCount = await Promise.all(categoriesCountPromise);
 
   const categoryCount: Record<string, number>[] = [];
@@ -99,6 +92,7 @@ export const getInventories = async ({
 
   return categoryCount;
 };
+
 interface MyDocument extends Document {
   createdAt: Date;
   discount?: number;

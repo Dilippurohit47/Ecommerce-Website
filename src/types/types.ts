@@ -1,12 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import { ApplyBasicQueryCasting } from "mongoose";
 
 export interface NewUserRequestBody {
   name: string;
   email: string;
   photo: string;
   gender: string;
-
   _id: string;
   dob: Date;
 }
@@ -61,7 +59,7 @@ export type invalidateCacheTypeProps = {
    admin?:boolean;
    userId?:string;
    orderId?:string;
-   productId?:string;
+   productId?:string | string[] | undefined;
 
 }
 

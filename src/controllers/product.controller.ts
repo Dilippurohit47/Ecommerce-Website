@@ -59,6 +59,24 @@ export const getAdminProducts = TryCatch(async (req, res, next) => {
   });
 });
 
+export const categoryProduct = TryCatch(async (req, res, next) => {
+  const { category } = req.params; // Assuming category is a parameter in the route, e.g., '/api/products/category/:category'
+
+  try {
+    const categoryProducts = await Product.find({ category });
+
+    if (!categoryProducts || categoryProducts.length === 0) {
+      return res.status(404).json({ success: false, message: 'No products found for the specified category' });
+    }
+
+    return res.status(200).json({ success: true, categoryProducts });
+  } catch (error) {
+    // Handle the error appropriately
+    console.error('Error fetching category products:', error);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+});
+
 export const getSingleProducts = TryCatch(async (req, res, next) => {
   let product;
 

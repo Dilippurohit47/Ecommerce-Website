@@ -15,6 +15,6 @@ const storage = multer.diskStorage({
         callback(null , fileName);
 
     }
-});
+}); 
 
 export const singleUpload = multer({storage}).single("photo")

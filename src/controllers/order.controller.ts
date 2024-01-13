@@ -6,6 +6,7 @@ import { Product } from "../models/product.model.js";
 import { NewOrderRequestBody } from "../types/types.js";
 import { invalidateCache, reduceStock } from "../utils/feature.js";
 import Errorhandler from "../utils/utility-class.js";
+import { Request } from "express";
 
 export const myOrder = TryCatch(async (req, res, next) => {
   const { id: user } = req.query;
@@ -153,7 +154,7 @@ export const deleteOrder = TryCatch(async (req, res, next) => {
   if (!order) return next(new Errorhandler("Order Not Found", 404));
 
   await order.deleteOne();
-
+  
    invalidateCache({
     product: false,
     order: true,
