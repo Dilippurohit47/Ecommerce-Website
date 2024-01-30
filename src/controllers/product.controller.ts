@@ -59,6 +59,8 @@ export const getAdminProducts = TryCatch(async (req, res, next) => {
   });
 });
 
+
+
 export const categoryProduct = TryCatch(async (req, res, next) => {
   const { category } = req.params; // Assuming category is a parameter in the route, e.g., '/api/products/category/:category'
 
@@ -73,7 +75,7 @@ export const categoryProduct = TryCatch(async (req, res, next) => {
   } catch (error) {
     // Handle the error appropriately
     console.error('Error fetching category products:', error);
-    return res.status(500).json({ success: false, message: 'Internal server error' });
+    return res.status(500).json({ success: false, message: `Internal server error ${error} ` });
   }
 });
 
@@ -98,6 +100,7 @@ export const getSingleProducts = TryCatch(async (req, res, next) => {
     product,
   });
 });
+
 
 export const newProduct = TryCatch(
   async (
@@ -139,9 +142,13 @@ export const newProduct = TryCatch(
   }
 );
 
+
+
+
+
 ////update p
 export const updateProduct = TryCatch(async (req, res, next) => {
-  const { id } = req.params;
+  const {id}  = req.params;
   const { name, price, stock, category } = req.body;
   const photo = req.file;
   const product = await Product.findById(id);
